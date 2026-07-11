@@ -7,11 +7,8 @@
 <br>
 
 <!-- ▶️ SHOWCASE VIDEO -->
-<video src=
-
 https://github.com/user-attachments/assets/a7b86505-6f74-43ec-afce-c5132a3fe142
-
- controls muted width="760"></video>
+<video src="https://github.com/XenQ-Dev/Animated-Sign-In-Sign-Up-Page-/raw/main/assets/showcase.mp4" controls muted width="760"></video>
 
 <sub>▶️ If the player doesn't load, <a href="https://github.com/XenQ-Dev/Animated-Sign-In-Sign-Up-Page-/raw/main/assets/showcase.mp4"><b>watch the demo here</b></a>.</sub>
 
