@@ -9,7 +9,13 @@
 <!-- ▶️ SHOWCASE VIDEO -->
 
 
-https://github.com/user-attachments/assets/a387d222-97e3-4010-b87c-f894a9bdb454
+
+
+https://github.com/user-attachments/assets/a33626cf-79c6-4e97-9e00-4d87cf82adcc
+
+
+
+
 
 
 
