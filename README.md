@@ -126,9 +126,7 @@ Animated-Sign-In-Sign-Up-Page-/
 
 ## 🙏 Acknowledgements
 
-The reactive character animations were adapted into vanilla JS from the lovely open‑source
-[animated‑characters‑login‑page](https://github.com/a97242689/animated-characters-login-page) concept,
-then extended with the slime‑physics tumble, particles, expressions and confetti.
+This project was inspired by CareerCompass Login page design.
 
 ---
 
