@@ -1,0 +1,488 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+:root{
+    --page-bg: #ffffff;
+    --ink: #081b29;
+    --line: #081b29;
+}
+
+[data-theme="dark"]{
+    --page-bg: #0a1f33;   /* deep ocean blue */
+    --ink: #e6eef7;
+    --line: #6f8ba6;
+}
+
+body{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: var(--page-bg);
+}
+
+/* ── Light / dark theme toggle ── */
+.theme-toggle{
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 2px solid #0ef;
+    background: var(--page-bg);
+    color: #0ef;
+    font-size: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 100;
+    box-shadow: 0 0 12px rgba(0, 238, 255, .4);
+    transition: transform .25s ease;
+}
+
+.theme-toggle:hover{ transform: scale(1.1); }
+
+.theme-toggle:active{ transform: scale(.92); }
+
+/* ── Theme switch: circular ripple reveal + spinning icon ── */
+::view-transition-old(root),
+::view-transition-new(root){
+    animation: none;          /* the reveal is driven by a custom clip in JS */
+    mix-blend-mode: normal;
+}
+
+/* keep the button out of the ripple clip and give it its own spin */
+.theme-toggle{ view-transition-name: theme-toggle; }
+
+::view-transition-group(theme-toggle){ z-index: 2147483646; }
+::view-transition-old(theme-toggle){ animation: toggle-spin-out .55s ease both; }
+::view-transition-new(theme-toggle){ animation: toggle-spin-in  .55s ease both; }
+
+@keyframes toggle-spin-out{
+    to { transform: rotate(180deg); opacity: 0; }
+}
+@keyframes toggle-spin-in{
+    from { transform: rotate(-180deg); opacity: 0; }
+    to   { transform: rotate(0deg);    opacity: 1; }
+}
+
+/* fallback spin for browsers without the View Transitions API */
+.theme-toggle.spin i{ animation: icon-spin .5s ease; }
+@keyframes icon-spin{ from { transform: rotate(0); } to { transform: rotate(360deg); } }
+
+.scene{
+    position: relative;
+    transform: scale(1.25);   /* default size tuned to look like a 125% browser zoom */
+    transform-origin: center center;
+}
+
+/* ── Cute mascots — they live inside the blue panel now ── */
+.ac-stage{
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 5;
+    overflow: hidden;
+}
+
+#ac-mount{
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    pointer-events: none;
+    will-change: transform;
+    /* xPercent/yPercent/scale/rotation are driven by GSAP in script.js */
+}
+
+.js-toggle-password{
+    cursor: pointer;
+    pointer-events: auto;
+}
+
+/* ── Mascot faces: eyes, pupils, mouths, expressions ── */
+.ac-eyeball{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border-radius: 50%;
+    transition: height .3s cubic-bezier(.4,0,.2,1), border-radius .3s cubic-bezier(.4,0,.2,1), transform .3s cubic-bezier(.4,0,.2,1);
+    will-change: height, transform;
+}
+.ac-eyeball-pupil{ border-radius: 50%; transition: transform .1s ease-out, opacity .1s; }
+.ac-pupil{ border-radius: 50%; transition: transform .1s ease-out, height .15s ease-out; }
+
+.ac-purple-mouth{
+    position: absolute;
+    width: 24px; height: 8px;
+    background-color: #2D2D2D;
+    border-radius: 0 0 12px 12px;
+    transition: left .5s cubic-bezier(0,0,.2,1), top .5s cubic-bezier(0,0,.2,1),
+                width .5s cubic-bezier(.4,0,.2,1), height .5s cubic-bezier(.4,0,.2,1),
+                border-radius .5s cubic-bezier(.4,0,.2,1), transform .5s cubic-bezier(.4,0,.2,1);
+}
+.ac-purple-mouth.typing{ width: 7px; height: 32px; border-radius: 0; transform: translateX(13.5px) translateY(-28px) var(--counter-skew, skewX(0deg)); }
+.ac-purple-mouth.sad{ width: 24px; height: 8px; border-radius: 12px 12px 0 0; }
+.ac-purple-mouth.happy{ width: 30px; height: 16px; border-radius: 0 0 15px 15px; }
+
+.ac-orange-mouth{
+    position: absolute;
+    width: 26px; height: 13px;
+    background-color: #2D2D2D;
+    border-radius: 0 0 13px 13px;
+    transition: left .2s cubic-bezier(0,0,.2,1), top .2s cubic-bezier(0,0,.2,1),
+                width .5s cubic-bezier(.4,0,.2,1), height .5s cubic-bezier(.4,0,.2,1),
+                border-radius .5s cubic-bezier(.4,0,.2,1), transform .5s cubic-bezier(.4,0,.2,1);
+}
+.ac-orange-mouth.typing{ width: 14px; height: 14px; border-radius: 50%; transform: translateX(6px); }
+.ac-orange-mouth.sad{ width: 26px; height: 13px; border-radius: 13px 13px 0 0; }
+.ac-orange-mouth.happy{ width: 32px; height: 18px; border-radius: 0 0 16px 16px; }
+
+.ac-yellow-mouth{ position: absolute; transition: left .2s cubic-bezier(0,0,.2,1), top .2s cubic-bezier(0,0,.2,1); }
+.ac-yellow-mouth path{
+    d: path('M0 10 Q10 10, 20 10 Q30 10, 40 10 Q50 10, 60 10 Q70 10, 80 10');
+    transition: d .5s cubic-bezier(.4,0,.2,1);
+}
+.ac-yellow-mouth path.wavy{ d: path('M0 10 Q10 2, 20 10 Q30 18, 40 10 Q50 2, 60 10 Q70 18, 80 10'); }
+.ac-yellow-mouth path.happy{ d: path('M0 2 Q10 10, 20 14 Q30 18, 40 18 Q50 18, 60 14 Q70 10, 80 2'); }
+
+/* confetti burst on a successful login */
+.ac-confetti{ position: fixed; inset: 0; width: 100vw; height: 100vh; overflow: visible; pointer-events: none; z-index: 9999; }
+.ac-confetti .piece{ position: absolute; border-radius: 2px; animation: ac-confetti-fall linear forwards; }
+
+/* little splash particles thrown off on each slime bounce */
+.ac-particle{ position: fixed; border-radius: 50%; pointer-events: none; z-index: 9998; will-change: transform, opacity; }
+@keyframes ac-confetti-fall{
+    0%   { translate: 0 0; opacity: 1; }
+    100% { translate: 30px 200vh; opacity: 1; rotate: 720deg; }
+}
+
+.wrapper{
+    position: relative;
+    width: 750px;
+    height: 450px;
+    background: transparent;
+    border: 2px solid #0ef;
+    overflow: hidden;
+    box-shadow: 0 0 25px #0ef;
+}
+
+.wrapper .form-box{
+    position: absolute;
+    top: 0;
+    width: 50%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.wrapper .form-box.login{
+    left: 0;
+    padding: 0px 60px 0 40px;
+    /* display: none; */
+}
+
+.wrapper .form-box.login .animation{
+    transform: translateX(0);
+    opacity: 1;
+    filter: blur(0);
+    transition: transform .7s ease, opacity .7s ease, filter .7s ease;
+    transition-delay: calc(.1s * var(--j));
+}
+
+.wrapper.active .form-box.login .animation{
+    transform: translateX(-120%);
+    opacity: 0;
+    filter: blur(10px);
+    transition-delay: calc(.1s * var(--i));
+}
+
+.wrapper .form-box.register{
+    right: 0;
+    padding: 0px 40px 0px 60px;
+    /* display: none; */
+    pointer-events: none;
+}
+
+.wrapper.active .form-box.register{
+    pointer-events: auto;
+}
+
+.wrapper .form-box.register .animation{
+    transform: translateX(120%);
+    opacity: 0;
+    filter: blur(10px);
+    transition: transform .7s ease, opacity .7s ease, filter .7s ease;
+}
+
+.wrapper.active .form-box.register .animation{
+    transform: translateX(0);
+    opacity: 1;
+    filter: blur(0);
+    transition-delay: calc(.1s * var(--i));
+}
+
+.form-box h2{
+    font-size: 32px;
+    color: var(--ink);
+    text-align: center;
+}
+
+.form-box .input-box{
+    position: relative;
+    width: 100%;
+    height: 50px;
+    margin: 25px 0;
+}
+
+.input-box input{
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    border: none;
+    outline: none;
+    border-bottom: 2px solid var(--line);
+    padding-right: 23px;
+    font-size: 16px;
+    color: var(--ink);
+    font-weight: 500;
+    transition: border-color .5s;
+}
+
+.input-box input:focus,
+.input-box input:valid{ border-bottom-color: #0ef;}
+
+.input-box label{
+    position: absolute;
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
+    font-size: 16px;
+    color: var(--ink);
+    pointer-events: none;
+    transition: top .5s, left .5s, font-size .5s;
+}
+
+.input-box input:focus~label,
+.input-box input:valid~label{
+    top: -5px;
+    color: #0ef;
+}
+
+/* keep the floating label lifted when the browser autofills the field
+   (kept in separate rules so an unknown selector can't drop the whole rule) */
+.input-box input:-webkit-autofill~label{ top: -5px; color: #0ef; }
+.input-box input:autofill~label{ top: -5px; color: #0ef; }
+.input-box input:-webkit-autofill~i{ color: #0ef; }
+.input-box input:autofill~i{ color: #0ef; }
+
+/* stop the browser's autofill from painting its own background / text colour */
+.input-box input:-webkit-autofill,
+.input-box input:-webkit-autofill:hover,
+.input-box input:-webkit-autofill:focus,
+.input-box input:-webkit-autofill:active{
+    -webkit-text-fill-color: var(--ink);
+    -webkit-box-shadow: 0 0 0 1000px var(--page-bg) inset;
+    caret-color: var(--ink);
+}
+.input-box input:autofill{
+    box-shadow: 0 0 0 1000px var(--page-bg) inset;
+    caret-color: var(--ink);
+}
+
+.input-box i{
+    position: absolute;
+    top: 50%;
+    right: 0;
+    transform: translateY(-50%);
+    font-size: 18px;
+    color: var(--ink);
+}
+
+.input-box input:focus~i,
+.input-box input:valid~i{ color: #0ef;}
+
+.btn{
+    position: relative;
+    width: 100%;
+    height: 45px;
+    background: linear-gradient(45deg, #0077b6, #0ef);
+    border: 2px solid #0ef;
+    outline: none;
+    border-radius: 40px;
+    cursor: pointer;
+    font-size: 16px;
+    color: #fff;
+    font-weight: 600;
+    z-index: 1;
+    overflow: hidden;
+}
+
+.btn::before{
+    content: '';
+    position: absolute;
+    top: -100%;
+    left: 0;
+    width: 100%;
+    height: 300%;
+    background: linear-gradient(#0ef, #0077b6, #0ef, #0077b6);
+    z-index: -1;
+    transition: .5s;
+}
+
+.btn:hover::before{ top: 0;}
+
+.form-box .logreg-link{
+    font-size: 14.5px;
+    color: var(--ink);
+    text-align: center;
+    margin: 20px 0px 10px;
+}
+
+.logreg-link p a{
+    color: #0ef;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.logreg-link p a:hover{ text-decoration: underline;}
+
+.form-box .form-msg{
+    min-height: 18px;
+    margin: -8px 0 2px;
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.3;
+    text-align: center;
+    color: #ff5c6c;
+}
+
+.form-box .form-msg.success{ color: #0ef; }
+
+.wrapper .info-text{
+    position: absolute;
+    top: 0;
+    width: 50%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
+.info-text h2{
+    margin-top: 32px;
+}
+
+.wrapper .info-text.login{
+    right: 0;
+    text-align: right;
+    padding: 0px 40px 60px 150px;
+    /* display: none; */
+}
+
+.wrapper .info-text.login .animation{
+    transform: translateX(0);
+    opacity: 1;
+    filter: blur(0);
+    transition: transform .7s ease, opacity .7s ease, filter .7s ease;
+    transition-delay: calc(.1s * var(--j));
+}
+
+.wrapper.active .info-text.login .animation{
+    transform: translateX(120%);
+    opacity: 0;
+    filter: blur(10px);
+    transition-delay: calc(.1s * var(--i));
+}
+
+.wrapper .info-text.register{
+    left: 0;
+    text-align: left;
+    padding: 0px 150px 60px 40px;
+    /* display: none; */
+    pointer-events: none;
+}
+
+.wrapper.active .info-text.register{
+    pointer-events: auto;
+}
+
+.wrapper .info-text.register .animation{
+    transform: translateX(-120%);
+    opacity: 0;
+    filter: blur(10px);
+    transition: transform .7s ease, opacity .7s ease, filter .7s ease;
+    transition-delay: calc(.1s * var(--j));
+}
+
+.wrapper.active .info-text.register .animation{
+    transform: translateX(0);
+    opacity: 1;
+    filter: blur(0);
+    transition-delay: calc(.1s * var(--i));
+}
+
+.info-text h2{
+    font-size: 30px;
+    color: #fff;
+    line-height: 1.2;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+}
+
+.info-text p{
+    margin-top: 14px;
+    font-size: 14px;
+    line-height: 1.6;
+    font-weight: 300;
+    color: rgba(255, 255, 255, .9);
+}
+
+.wrapper .bg-animate{
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 850px;
+    height: 600px;
+    background: linear-gradient(135deg, #0077b6 0%, #00b4d8 55%, #48e3ff 100%);
+    border-bottom: 3px solid #0ef;
+    transform: rotate(10deg) skewY(40deg);
+    /* transform: rotate(0) skewY(0); */
+    transform-origin: bottom right;
+    transition: transform 1.5s ease;
+    transition-delay: 1.6s;
+}
+
+.wrapper.active .bg-animate{
+    transform: rotate(0) skewY(0);
+    transition-delay: .5s;
+}
+
+.wrapper .bg-animate2{
+    position: absolute;
+    top: 100%;
+    left: 250px;
+    width: 850px;
+    height: 700px;
+    background: var(--page-bg);
+    border-top: 3px solid #0ef;
+    /* transform: rotate(-11deg) skewY(-41deg); */
+    transform: rotate(0) skewY(0);
+    transform-origin: bottom left;
+    transition: transform 1.5s ease;
+    transition-delay: .5s;
+}
+
+.wrapper.active .bg-animate2{
+    transform: rotate(-11deg) skewY(-41deg);
+    transition-delay: 1.2s;
+}
