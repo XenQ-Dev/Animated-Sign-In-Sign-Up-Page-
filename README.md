@@ -1,6 +1,6 @@
 <div align="center">
 
-# ✨ Slime Login UI
+# ✨ LOGIN TEMPLATE
 
 ### An animated slider **login / signup** experience where four little slime characters watch, react, and celebrate with you.
 
